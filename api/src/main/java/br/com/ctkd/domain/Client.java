@@ -1,10 +1,7 @@
 package br.com.ctkd.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,12 +9,6 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import static lombok.AccessLevel.NONE;
 
 @Getter
 @Setter
@@ -27,23 +18,10 @@ import static lombok.AccessLevel.NONE;
 @Entity(name = "clients")
 public class Client extends BaseEntity {
 
-    @Column(name = "client_name")
+    @Column(name = "client_name", nullable = false)
     private String name;
-    @Column(name = "birthdate")
+    @Column(name = "birthdate", nullable = false)
     private LocalDate birthdate;
-    @Column(name = "cpf_number")
+    @Column(name = "cpf_number", nullable = false)
     private String cpf;
-
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @Setter(NONE)
-    private List<Occurrence> occurrences = new ArrayList<>();
-
-    public List<Occurrence> getOccurrences() {
-        return new ArrayList<>(occurrences);
-    }
-
-    public void addOccurrence(Occurrence ...occurrences) {
-        this.occurrences.addAll(List.of(occurrences));
-    }
 }

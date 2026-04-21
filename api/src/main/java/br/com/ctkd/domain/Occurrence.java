@@ -29,6 +29,7 @@ public class Occurrence extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", nullable = false)
+    @ToString.Exclude
     private Client client;
 
     @ManyToOne(fetch = FetchType.LAZY)
