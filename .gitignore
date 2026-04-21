@@ -1,0 +1,106 @@
+# ============================================================
+# .gitignore ? Java + Spring Boot + Gradle + IntelliJ IDEA
+# ============================================================
+
+# ------------------------------------------------------------
+# IntelliJ IDEA
+# ------------------------------------------------------------
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+# ------------------------------------------------------------
+# Gradle
+# ------------------------------------------------------------
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# ------------------------------------------------------------
+# Spring Boot
+# ------------------------------------------------------------
+target/
+*.jar
+*.war
+*.ear
+*.nar
+
+# Spring Boot devtools restart trigger
+.reloadtrigger
+
+# ------------------------------------------------------------
+# Java
+# ------------------------------------------------------------
+*.class
+*.log
+*.ctxt
+.mtj.tmp/
+hs_err_pid*
+replay_pid*
+
+# ------------------------------------------------------------
+# Maven (caso venha a usar)
+# ------------------------------------------------------------
+.mvn/
+mvnw
+mvnw.cmd
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# ------------------------------------------------------------
+# Variáveis de ambiente e segredos
+# ------------------------------------------------------------
+.env
+.env.*
+!.env.example
+application-local.yml
+application-local.properties
+application-secret*.yml
+application-secret*.properties
+secrets.yml
+secrets.properties
+
+# ------------------------------------------------------------
+# Logs
+# ------------------------------------------------------------
+logs/
+*.log
+spring.log
+
+# ------------------------------------------------------------
+# OS
+# ------------------------------------------------------------
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+
+# ------------------------------------------------------------
+# Docker (se aplicável)
+# ------------------------------------------------------------
+docker-compose.override.yml
+
+# ------------------------------------------------------------
+# SonarQube
+# ------------------------------------------------------------
+.sonar/
+.sonarqube/
