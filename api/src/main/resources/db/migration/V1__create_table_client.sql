@@ -1,4 +1,4 @@
-CREATE TABLE client
+CREATE TABLE clients
 (
     id            UUID PRIMARY KEY      DEFAULT gen_random_uuid(),
     client_name   VARCHAR(255) NOT NULL,

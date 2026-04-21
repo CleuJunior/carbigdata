@@ -1,20 +1,15 @@
 package br.com.ctkd.domain;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import static lombok.AccessLevel.NONE;
@@ -24,17 +19,25 @@ import static lombok.AccessLevel.NONE;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString(callSuper = true)
-@Entity(name = "clients")
-public class Client extends BaseEntity {
+@Entity(name = "addresses")
+public class Address extends BaseEntity {
 
-    @Column(name = "client_name")
-    private String name;
-    @Column(name = "birthdate")
-    private LocalDate birthdate;
-    @Column(name = "cpf_number")
-    private String cpf;
+    @Column(name = "street_name", nullable = false)
+    private String streetName;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @Column(nullable = false)
+    private String neighborhood;
+
+    @Column(name = "zip_code", nullable = false)
+    private String zipCode;
+
+    @Column(name = "city_name", nullable = false)
+    private String city;
+
+    @Column(name = "state_name", nullable = false)
+    private String state;
+
+    @OneToMany(mappedBy = "address")
     @ToString.Exclude
     @Setter(NONE)
     private List<Occurrence> occurrences = new ArrayList<>();
@@ -43,7 +46,7 @@ public class Client extends BaseEntity {
         return new ArrayList<>(occurrences);
     }
 
-    public void addOccurrence(Occurrence ...occurrences) {
+    public void addOccurrence(Occurrence... occurrences) {
         this.occurrences.addAll(List.of(occurrences));
     }
 }
