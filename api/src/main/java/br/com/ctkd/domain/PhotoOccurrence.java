@@ -20,7 +20,7 @@ import lombok.ToString;
 public class PhotoOccurrence extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cod_ocorrencia", nullable = false)
+    @JoinColumn(name = "cod_occurrence", nullable = false)
     @ToString.Exclude
     private Occurrence occurrence;
 
