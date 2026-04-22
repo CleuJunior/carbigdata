@@ -29,6 +29,7 @@ public abstract class BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(updatable = false, nullable = false)
+    @Setter(NONE)
     protected UUID id;
 
     @CreatedDate
@@ -43,7 +44,7 @@ public abstract class BaseEntity {
     protected boolean deleted;
 
     public String getId() {
-        return id.toString();
+        return id == null ? "" : id.toString();
     }
 
     @Override

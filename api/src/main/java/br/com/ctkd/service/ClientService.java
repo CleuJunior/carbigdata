@@ -1,6 +1,7 @@
 package br.com.ctkd.service;
 
 import br.com.ctkd.domain.Client;
+import br.com.ctkd.exceptions.NotFoundException;
 import br.com.ctkd.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -21,7 +22,7 @@ public class ClientService {
         var uuid = UUID.fromString(id);
 
         return repository.findById(uuid)
-                .orElseThrow();
+                .orElseThrow(() -> new NotFoundException("client.not.found", id));
     }
 
     public List<Client> getListClients() {

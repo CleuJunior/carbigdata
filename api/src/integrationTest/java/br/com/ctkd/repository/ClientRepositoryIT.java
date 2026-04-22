@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
@@ -56,5 +57,61 @@ class ClientRepositoryIT {
 
         assertThat(clientOptional)
                 .isNotPresent();
+    }
+
+    @Test
+    void shouldGetClientsListNotDeleted() {
+        var clientOne = new Client();
+        clientOne.setName("Gabriela Nunes");
+        clientOne.setBirthdate(LocalDate.of(2000, 10, 23));
+        clientOne.setCpf("798.543.950-14");
+        clientOne.setDeleted(false);
+
+        var clientTwo = new Client();
+        clientTwo.setName("Alvarez Paz");
+        clientTwo.setBirthdate(LocalDate.of(1983, 11, 3));
+        clientTwo.setCpf("918.432.740-51");
+        clientTwo.setDeleted(false);
+
+        var clientThree = new Client();
+        clientThree.setName("Alvarez Paz");
+        clientThree.setBirthdate(LocalDate.of(1978, 3, 28));
+        clientThree.setCpf("208.276.380-35");
+        clientThree.setDeleted(true);
+
+        clientRepository.saveAll(List.of(clientOne, clientTwo, clientThree));
+
+        var result = clientRepository.findAll();
+
+        assertThat(result)
+                .containsExactlyInAnyOrder(clientOne, clientTwo);
+    }
+
+    @Test
+    void shouldCountClientsNotDeleted() {
+        var clientOne = new Client();
+        clientOne.setName("Taihau Fyuze");
+        clientOne.setBirthdate(LocalDate.of(1961, 7, 21));
+        clientOne.setCpf("700.062.580-50");
+        clientOne.setDeleted(false);
+
+        var clientTwo = new Client();
+        clientTwo.setName("Cidaoze Loir");
+        clientTwo.setBirthdate(LocalDate.of(1986, 12, 31));
+        clientTwo.setCpf("125.585.760-97");
+        clientTwo.setDeleted(false);
+
+        var clientThree = new Client();
+        clientThree.setName("Biubuas Dobiamo");
+        clientThree.setBirthdate(LocalDate.of(1947, 2, 23));
+        clientThree.setCpf("470.486.950-48");
+        clientThree.setDeleted(true);
+
+        clientRepository.saveAll(List.of(clientOne, clientTwo, clientThree));
+
+        var result = clientRepository.count();
+
+        assertThat(result)
+                .isEqualTo(2);
     }
 }
