@@ -1,7 +1,7 @@
 package br.com.ctkd.factory;
 
 import br.com.ctkd.domain.Client;
-import br.com.ctkd.dto.reponse.ClientResponse;
+import br.com.ctkd.dto.response.ClientResponse;
 import br.com.ctkd.dto.request.ClientRequest;
 import org.springframework.stereotype.Component;
 

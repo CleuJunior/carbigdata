@@ -1,4 +1,4 @@
-package br.com.ctkd.dto.reponse;
+package br.com.ctkd.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

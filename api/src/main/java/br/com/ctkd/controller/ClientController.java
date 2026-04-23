@@ -1,6 +1,6 @@
 package br.com.ctkd.controller;
 
-import br.com.ctkd.dto.reponse.ClientResponse;
+import br.com.ctkd.dto.response.ClientResponse;
 import br.com.ctkd.dto.request.ClientRequest;
 import br.com.ctkd.factory.ClientFactory;
 import br.com.ctkd.service.ClientService;
