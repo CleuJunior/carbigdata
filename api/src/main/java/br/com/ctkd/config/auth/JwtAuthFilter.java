@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -20,7 +19,6 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -38,10 +36,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         if (jwtService.isTokenValid(token)) {
             var username = jwtService.extractUsername(token);
-            var userDetails = userDetailsService.loadUserByUsername(username);
+            var authorities = jwtService.extractAuthorities(token);
 
             var authentication = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities()
+                    username, null, authorities
             );
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authentication);

@@ -1,9 +1,9 @@
 package br.com.ctkd.controller;
 
-import br.com.ctkd.dto.response.ClientResponse;
-import br.com.ctkd.dto.request.ClientRequest;
-import br.com.ctkd.factory.ClientFactory;
-import br.com.ctkd.service.ClientService;
+import br.com.ctkd.dto.request.AddressRequest;
+import br.com.ctkd.dto.response.AddressResponse;
+import br.com.ctkd.factory.AddressFactory;
+import br.com.ctkd.service.AddressService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,66 +25,66 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/clients")
 @RequiredArgsConstructor
-public class ClientController {
+public class AddressController {
 
-    private final ClientService service;
-    private final ClientFactory factory;
+    private final AddressService service;
+    private final AddressFactory factory;
 
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<ClientResponse> getClientById(@PathVariable String id) {
-        var client = service.getById(id);
-        var response = factory.toClientResponse(client);
+    public ResponseEntity<AddressResponse> getAddressById(@PathVariable String id) {
+        var address = service.getAddressById(id);
+        var response = factory.toAddressResponse(address);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<List<ClientResponse>> listClients() {
-        var categories = service.getListClients();
-        var response = factory.toClientResponse(categories);
+    public ResponseEntity<List<AddressResponse>> listAddress() {
+        var addresses = service.getListAddresses();
+        var response = factory.toAddressResponse(addresses);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @GetMapping("/pageable")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Page<ClientResponse>> pageClients(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "15") int size) {
+    public ResponseEntity<Page<AddressResponse>> pageAddress(@RequestParam(defaultValue = "0") int page,
+                                                             @RequestParam(defaultValue = "15") int size) {
 
-        var response = service.pageClients(page, size)
-                .map(factory::toClientResponse);
+        var response = service.pageAddresses(page, size)
+                .map(factory::toAddressResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientResponse> saveClient(@RequestBody @Valid ClientRequest request) {
-        var clientToSave = factory.toClient(request);
-        var clientSaved = service.insertClient(clientToSave);
-        var response = factory.toClientResponse(clientSaved);
+    public ResponseEntity<AddressResponse> saveAddress(@RequestBody @Valid AddressRequest request) {
+        var addressToSave = factory.toAddress(request);
+        var addressSaved = service.insertAddress(addressToSave);
+        var response = factory.toAddressResponse(addressSaved);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientResponse> updateClient(@PathVariable String id,
-                                                       @RequestBody @Valid ClientRequest request) {
+    public ResponseEntity<AddressResponse> updateAddress(@PathVariable String id,
+                                                         @RequestBody @Valid AddressRequest request) {
 
-        var clientToUpdate = factory.toClient(request);
-        var clientUpdated = service.updateClient(clientToUpdate, id);
-        var response = factory.toClientResponse(clientUpdated);
+        var addressToUpdate = factory.toAddress(request);
+        var addressUpdated = service.updateAddress(addressToUpdate, id);
+        var response = factory.toAddressResponse(addressUpdated);
 
         return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
     }
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteClient(@PathVariable String id) {
-        service.softDelete(id);
+    public ResponseEntity<Void> deleteAddress(@PathVariable String id) {
+        service.softDeleteAddress(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

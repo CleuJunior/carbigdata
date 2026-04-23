@@ -24,29 +24,12 @@ public class Address extends BaseEntity {
 
     @Column(name = "street_name", nullable = false)
     private String streetName;
-
     @Column(nullable = false)
     private String neighborhood;
-
     @Column(name = "zip_code", nullable = false)
     private String zipCode;
-
     @Column(name = "city_name", nullable = false)
     private String city;
-
     @Column(name = "state_name", nullable = false)
     private String state;
-
-    @OneToMany(mappedBy = "address")
-    @ToString.Exclude
-    @Setter(NONE)
-    private List<Occurrence> occurrences = new ArrayList<>();
-
-    public List<Occurrence> getOccurrences() {
-        return new ArrayList<>(occurrences);
-    }
-
-    public void addOccurrence(Occurrence... occurrences) {
-        this.occurrences.addAll(List.of(occurrences));
-    }
 }

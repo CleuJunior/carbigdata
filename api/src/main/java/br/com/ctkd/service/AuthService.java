@@ -16,10 +16,10 @@ public class AuthService {
     private final JwtService jwtService;
 
     public AuthResponse login(AuthRequest request) {
-        authenticationManager.authenticate(
+        var auth = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password())
         );
-        var token = jwtService.generateToken(request.username());
+        var token = jwtService.generateToken(request.username(), auth.getAuthorities());
         return new AuthResponse(token);
     }
 }
