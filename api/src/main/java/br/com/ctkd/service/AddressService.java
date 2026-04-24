@@ -45,7 +45,7 @@ public class AddressService {
         Optional.ofNullable(request.getStreetName()).ifPresent(currentAddress::setStreetName);
         Optional.ofNullable(request.getNeighborhood()).ifPresent(currentAddress::setNeighborhood);
         Optional.ofNullable(request.getZipCode()).ifPresent(currentAddress::setZipCode);
-        Optional.ofNullable(request.getZipCode()).ifPresent(currentAddress::setCity);
+        Optional.ofNullable(request.getCity()).ifPresent(currentAddress::setCity);
         Optional.ofNullable(request.getState()).ifPresent(currentAddress::setState);
 
         return repository.save(currentAddress);
