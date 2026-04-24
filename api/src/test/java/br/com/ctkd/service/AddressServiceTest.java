@@ -161,7 +161,7 @@ class AddressServiceTest {
         given(repository.findById(uuid)).willReturn(Optional.of(address));
         given(repository.save(any(Address.class))).willReturn(address);
 
-        underTest.softDeleteAddress(uuid.toString());
+        underTest.softDelete(uuid.toString());
 
         verify(repository).save(captor.capture());
 

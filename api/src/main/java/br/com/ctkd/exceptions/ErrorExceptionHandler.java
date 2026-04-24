@@ -34,4 +34,20 @@ public class ErrorExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
     }
 
+    @ExceptionHandler(OccurrenceStatusException.class)
+    public ResponseEntity<ErrorResponse> occurrenceStatusConflict(HttpServletRequest request, OccurrenceStatusException cause) {
+        var message = translation.translateMessage(cause);
+
+        var err = ErrorResponse.builder()
+                .status(HttpStatus.CONFLICT.value())
+                .statusErrorMessage(HttpStatus.CONFLICT.getReasonPhrase())
+                .message(message)
+                .trace(request.getRequestURI())
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        log.error("{} URI: {}", HttpStatus.CONFLICT, request.getRequestURI());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(err);
+    }
+
 }

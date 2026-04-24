@@ -36,6 +36,7 @@ public class AddressFactory {
         address.setStreetName(request.streetName());
         address.setNeighborhood(request.neighborhood());
         address.setZipCode(request.zipCode());
+        address.setCity(request.city());
         address.setState(request.state());
 
         return address;

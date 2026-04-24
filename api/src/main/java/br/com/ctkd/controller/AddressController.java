@@ -84,7 +84,7 @@ public class AddressController {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteAddress(@PathVariable String id) {
-        service.softDeleteAddress(id);
+        service.softDelete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

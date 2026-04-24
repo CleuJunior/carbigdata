@@ -6,11 +6,9 @@ import lombok.Builder;
 
 @Builder
 @JsonIgnoreProperties(ignoreUnknown = true)
-public record AddressRequest(
-        @NotNull String streetName,
-        @NotNull String neighborhood,
-        @NotNull String zipCode,
-        @NotNull String city,
-        @NotNull String state
+public record PhotoOccurrenceRequest(
+        @NotNull String occurrenceId,
+        @NotNull String pathBucket,
+        @NotNull String hash
 ) {
 }

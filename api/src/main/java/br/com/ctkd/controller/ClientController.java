@@ -42,8 +42,8 @@ public class ClientController {
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     public ResponseEntity<List<ClientResponse>> listClients() {
-        var categories = service.getListClients();
-        var response = factory.toClientResponse(categories);
+        var clients = service.getListClients();
+        var response = factory.toClientResponse(clients);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }

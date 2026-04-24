@@ -39,14 +39,14 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return getclaims(token).getSubject();
+        return getClaims(token).getSubject();
     }
 
     @SuppressWarnings("unchecked")
     public List<GrantedAuthority> extractAuthorities(String token) {
-        var roles = (List<String>) getclaims(token).get("roles");
+        var roles = (List<String>) getClaims(token).get("roles");
 
-        if (roles == null){
+        if (roles == null) {
             return List.of();
         }
 
@@ -57,7 +57,7 @@ public class JwtService {
 
     public boolean isTokenValid(String token) {
         try {
-            getclaims(token);
+            getClaims(token);
             return true;
         } catch (JwtException e) {
             log.info(e.getMessage());
@@ -65,7 +65,7 @@ public class JwtService {
         }
     }
 
-    private Claims getclaims(String token) {
+    private Claims getClaims(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()

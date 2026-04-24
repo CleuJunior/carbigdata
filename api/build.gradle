@@ -46,5 +46,7 @@ tasks.register('integrationTest', Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
 
+    jvmArgs '-Djava.net.useSystemProxies=false'
+
     useJUnitPlatform()
 }

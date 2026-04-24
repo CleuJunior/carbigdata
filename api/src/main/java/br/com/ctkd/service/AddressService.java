@@ -1,7 +1,6 @@
 package br.com.ctkd.service;
 
 import br.com.ctkd.domain.Address;
-import br.com.ctkd.domain.Client;
 import br.com.ctkd.exceptions.NotFoundException;
 import br.com.ctkd.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
@@ -51,7 +50,7 @@ public class AddressService {
         return repository.save(currentAddress);
     }
 
-    public void softDeleteAddress(String id) {
+    public void softDelete(String id) {
         var address = getAddressById(id);
 
         address.setDeleted(true);

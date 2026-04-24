@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,9 +43,18 @@ public class Occurrence extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private StatusOccurrence status;
+    private StatusOccurrence status = StatusOccurrence.ACTIVE;
 
     @OneToMany(mappedBy = "occurrence", cascade = CascadeType.ALL)
     @ToString.Exclude
+    @Setter(AccessLevel.NONE)
     private List<PhotoOccurrence> photos = new ArrayList<>();
+
+    public List<PhotoOccurrence> getPhotos() {
+        return new ArrayList<>(photos);
+    }
+
+    public void addPhotos(List<PhotoOccurrence> photos) {
+        this.photos.addAll(photos);
+    }
 }
