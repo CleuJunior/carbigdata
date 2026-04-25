@@ -22,4 +22,12 @@ spring:
 security:
   jwt:
     secret: 4f8c7b8e1d2a3c4e5f6a7b8c9d0e1f2a4f8c7b8e1d2a3c4e5f6a7b8c9d0e1f2a
-    expiration: 86400000
+    expiration: 1800000
+
+aws:
+  s3:
+    endpoint: http://localhost:9000
+    region: us-east-1
+    access-key: minioadmin
+    secret-key: minioadmin123
+    bucket-name: occurrences

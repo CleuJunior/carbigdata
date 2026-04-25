@@ -1,6 +1,7 @@
 package br.com.ctkd.service;
 
 import br.com.ctkd.domain.Occurrence;
+import br.com.ctkd.domain.PhotoOccurrence;
 import br.com.ctkd.domain.StatusOccurrence;
 import br.com.ctkd.dto.request.OccurrenceQueryRequest;
 import br.com.ctkd.exceptions.NotFoundException;
@@ -10,6 +11,8 @@ import br.com.ctkd.repository.specification.OccurrenceSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,13 +30,13 @@ public class OccurrenceService {
 
         return repository.findById(uuid)
                 .orElseThrow(() -> new NotFoundException("occurrence.not.found", id));
-
     }
 
     public List<Occurrence> getAllOccurrence() {
         return repository.findAll();
     }
 
+    @Transactional
     public Occurrence insertOccurrence(Occurrence occurrence) {
         return repository.save(occurrence);
     }

@@ -2,7 +2,6 @@ package br.com.ctkd.factory;
 
 import br.com.ctkd.domain.Occurrence;
 import br.com.ctkd.domain.PhotoOccurrence;
-import br.com.ctkd.dto.request.PhotoOccurrenceRequest;
 import br.com.ctkd.dto.response.PhotoOccurrenceResponse;
 import org.springframework.stereotype.Component;
 
@@ -29,11 +28,11 @@ public class PhotoOccurrenceFactory {
                 .toList();
     }
 
-    public PhotoOccurrence toPhotoOccurrence(PhotoOccurrenceRequest request, Occurrence occurrence) {
+    public PhotoOccurrence toPhotoOccurrence(Occurrence occurrence, String pathBucket, String hash) {
         var photo = new PhotoOccurrence();
         photo.setOccurrence(occurrence);
-        photo.setPathBucket(request.pathBucket());
-        photo.setHash(request.hash());
+        photo.setPathBucket(pathBucket);
+        photo.setHash(hash);
         return photo;
     }
 }

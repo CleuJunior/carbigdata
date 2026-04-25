@@ -7,9 +7,11 @@ import br.com.ctkd.factory.OccurrenceFactory;
 import br.com.ctkd.service.AddressService;
 import br.com.ctkd.service.ClientService;
 import br.com.ctkd.service.OccurrenceService;
+import br.com.ctkd.service.PhotoOccurrenceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -31,6 +35,16 @@ public class OccurrenceController {
     private final ClientService clientService;
     private final AddressService addressService;
     private final OccurrenceFactory factory;
+    private final PhotoOccurrenceService photoOccurrenceService;
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    public ResponseEntity<OccurrenceResponse> getOccurrenceById(@PathVariable String id) {
+        var occurrence = service.getOccurrenceById(id);
+        var response = factory.toOccurrenceResponse(occurrence);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -50,18 +64,22 @@ public class OccurrenceController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<OccurrenceResponse> saveOccurrence(@RequestBody @Valid OccurrenceRequest request) {
+    public ResponseEntity<OccurrenceResponse> saveOccurrence(@RequestPart("data") @Valid OccurrenceRequest request,
+                                                             @RequestPart(value = "photos", required = false) List<MultipartFile> photos) {
+
         var client = clientService.getById(request.clientId());
         var address = addressService.getAddressById(request.addressId());
         var occurrence = factory.toOccurrence(request, client, address);
 
-        service.insertOccurrence(occurrence);
+        if (photos != null && !photos.isEmpty()) {
+            var photoEntities = photoOccurrenceService.createPhotoEntities(occurrence, photos);
+            occurrence.addPhotos(photoEntities);
+        }
 
-        var response = factory.toOccurrenceResponse(occurrence);
-
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        var saved = service.insertOccurrence(occurrence);
+        return ResponseEntity.status(HttpStatus.CREATED).body(factory.toOccurrenceResponse(saved));
     }
 
     @PatchMapping("/{id}")
