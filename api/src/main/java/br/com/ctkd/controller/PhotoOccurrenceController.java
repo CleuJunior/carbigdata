@@ -3,6 +3,12 @@ package br.com.ctkd.controller;
 import br.com.ctkd.dto.response.PhotoOccurrenceResponse;
 import br.com.ctkd.factory.PhotoOccurrenceFactory;
 import br.com.ctkd.service.PhotoOccurrenceService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +24,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/photos")
 @RequiredArgsConstructor
+@Tag(name = "Photos", description = "Photo attachments for occurrences")
+@SecurityRequirement(name = "bearerAuth")
 public class PhotoOccurrenceController {
 
     private final PhotoOccurrenceService service;
@@ -25,7 +33,14 @@ public class PhotoOccurrenceController {
 
     @GetMapping("/occurrences/{occurrenceId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<List<PhotoOccurrenceResponse>> getPhotosByOccurrence(@PathVariable String occurrenceId) {
+    @Operation(summary = "List photos for an occurrence")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Photo list returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Occurrence not found")
+    })
+    public ResponseEntity<List<PhotoOccurrenceResponse>> getPhotosByOccurrence(
+            @Parameter(description = "Occurrence UUID") @PathVariable String occurrenceId) {
         var photos = service.getPhotosByOccurrence(occurrenceId);
         var response = factory.toPhotoOccurrenceResponse(photos);
 
@@ -34,15 +49,31 @@ public class PhotoOccurrenceController {
 
     @GetMapping("/{photoId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<PhotoOccurrenceResponse> getPhoto(@PathVariable String photoId) {
+    @Operation(summary = "Get a single photo by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Photo found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Photo not found")
+    })
+    public ResponseEntity<PhotoOccurrenceResponse> getPhoto(
+            @Parameter(description = "Photo UUID") @PathVariable String photoId) {
         var photo = service.getPhotoById(photoId);
         var response = factory.toPhotoOccurrenceResponse(photo);
 
-        return ResponseEntity.status(HttpStatus.OK).body(response);    }
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
 
     @DeleteMapping("/{photoId}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deletePhoto(@PathVariable String photoId) {
+    @Operation(summary = "Delete a photo")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Photo deleted"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — ADMIN role required"),
+            @ApiResponse(responseCode = "404", description = "Photo not found")
+    })
+    public ResponseEntity<Void> deletePhoto(
+            @Parameter(description = "Photo UUID") @PathVariable String photoId) {
         service.deletePhoto(photoId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

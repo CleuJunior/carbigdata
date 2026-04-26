@@ -4,6 +4,12 @@ import br.com.ctkd.dto.response.ClientResponse;
 import br.com.ctkd.dto.request.ClientRequest;
 import br.com.ctkd.factory.ClientFactory;
 import br.com.ctkd.service.ClientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -25,6 +31,8 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/api/v1/clients")
 @RequiredArgsConstructor
+@Tag(name = "Clients", description = "Client management")
+@SecurityRequirement(name = "bearerAuth")
 public class ClientController {
 
     private final ClientService service;
@@ -32,7 +40,14 @@ public class ClientController {
 
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<ClientResponse> getClientById(@PathVariable String id) {
+    @Operation(summary = "Get client by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Client found"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "404", description = "Client not found")
+    })
+    public ResponseEntity<ClientResponse> getClientById(
+            @Parameter(description = "Client UUID") @PathVariable String id) {
         var client = service.getById(id);
         var response = factory.toClientResponse(client);
 
@@ -41,6 +56,11 @@ public class ClientController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "List all clients")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Client list returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
     public ResponseEntity<List<ClientResponse>> listClients() {
         var clients = service.getListClients();
         var response = factory.toClientResponse(clients);
@@ -50,8 +70,14 @@ public class ClientController {
 
     @GetMapping("/pageable")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
-    public ResponseEntity<Page<ClientResponse>> pageClients(@RequestParam(defaultValue = "0") int page,
-                                                            @RequestParam(defaultValue = "15") int size) {
+    @Operation(summary = "List clients with pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Paginated client list returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<Page<ClientResponse>> pageClients(
+            @Parameter(description = "Page number (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size", example = "15") @RequestParam(defaultValue = "15") int size) {
 
         var response = service.pageClients(page, size)
                 .map(factory::toClientResponse);
@@ -61,6 +87,12 @@ public class ClientController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Create a client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Client created"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — ADMIN role required")
+    })
     public ResponseEntity<ClientResponse> saveClient(@RequestBody @Valid ClientRequest request) {
         var clientToSave = factory.toClient(request);
         var clientSaved = service.insertClient(clientToSave);
@@ -71,8 +103,16 @@ public class ClientController {
 
     @PutMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ClientResponse> updateClient(@PathVariable String id,
-                                                       @RequestBody @Valid ClientRequest request) {
+    @Operation(summary = "Update a client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "202", description = "Client updated"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — ADMIN role required"),
+            @ApiResponse(responseCode = "404", description = "Client not found")
+    })
+    public ResponseEntity<ClientResponse> updateClient(
+            @Parameter(description = "Client UUID") @PathVariable String id,
+            @RequestBody @Valid ClientRequest request) {
 
         var clientToUpdate = factory.toClient(request);
         var clientUpdated = service.updateClient(clientToUpdate, id);
@@ -83,7 +123,15 @@ public class ClientController {
 
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Void> deleteClient(@PathVariable String id) {
+    @Operation(summary = "Soft-delete a client")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Client deleted"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — ADMIN role required"),
+            @ApiResponse(responseCode = "404", description = "Client not found")
+    })
+    public ResponseEntity<Void> deleteClient(
+            @Parameter(description = "Client UUID") @PathVariable String id) {
         service.softDelete(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

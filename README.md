@@ -31,6 +31,8 @@ Run the application:
 
 The API will be available at `http://localhost:8080`.
 
+Interactive API documentation (Swagger UI) is available at `http://localhost:8080/swagger-ui.html`.
+
 ## Authentication
 
 All endpoints except `/api/v1/auth/login` require a Bearer token.
