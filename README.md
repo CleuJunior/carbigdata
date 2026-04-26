@@ -6,14 +6,14 @@ REST API for managing clients and their occurrences (incidents/complaints). Buil
 
 - **Java 17** + **Spring Boot 4.0.5**
 - **PostgreSQL 16** — production database
-- **Flyway** — database migrations
+- **Flyway** — database migrations and seed data
 - **Spring Security** + **JJWT 0.12.3** — stateless JWT authentication
-- **H2** — in-memory database for tests
+- **Testcontainers** — real PostgreSQL container for integration tests
 
 ## Prerequisites
 
 - Java 17+
-- Docker (for PostgreSQL)
+- Docker (for PostgreSQL and integration tests)
 
 ## Running
 
@@ -90,14 +90,24 @@ All entities use UUIDs as primary keys, carry audit timestamps (`creationDate`, 
 
 ## Running Tests
 
+Docker must be running for integration tests — Testcontainers spins up a PostgreSQL 16 container automatically.
+
 ```bash
 # Unit tests (no Docker required)
 ./gradlew test
 
-# Integration tests (no Docker required — uses H2)
+# Integration tests (Docker required)
 ./gradlew integrationTest
 
 # Single test class or method
 ./gradlew test --tests br.com.ctkd.service.ClientServiceTest
 ./gradlew test --tests "br.com.ctkd.service.ClientServiceTest.shouldGetClientById"
+./gradlew integrationTest --tests br.com.ctkd.repository.ClientRepositoryIT
+./gradlew integrationTest --tests "br.com.ctkd.repository.ClientRepositoryIT.shouldFindByIdAndNotDeleted"
 ```
+
+### Test configuration
+
+Integration tests use `api/src/test/resources/application.yml`, which overrides the main config to point at the Testcontainers database and run Flyway migrations (including seed data). No profile flag is needed — the file is automatically picked up from the test classpath.
+
+Repository tests (`@DataJpaTest`) and controller tests (`@SpringBootTest`) both run against a real PostgreSQL instance. Each test starts with a clean slate: seed data inserted by Flyway migrations is wiped before every test method via `@Sql`, and for `@DataJpaTest` those deletes are rolled back after each test so seed data is restored for the next one.
