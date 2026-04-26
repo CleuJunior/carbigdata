@@ -1,5 +1,6 @@
 package br.com.ctkd.controller;
 
+import br.com.ctkd.config.TestcontainersConfiguration;
 import br.com.ctkd.domain.Client;
 import br.com.ctkd.repository.ClientRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,9 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
@@ -20,7 +23,13 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
+@Import(TestcontainersConfiguration.class)
+@Sql(statements = {
+        "DELETE FROM photos_occurrence",
+        "DELETE FROM occurrences",
+        "DELETE FROM clients",
+        "DELETE FROM addresses"
+})
 class ClientControllerIT {
 
     private static final String BASE_PATH = "/api/v1/clients";
@@ -36,8 +45,6 @@ class ClientControllerIT {
 
     @BeforeEach
     void setup() {
-        clientRepository.deleteAll();
-
         restClient = RestClient.builder()
                 .baseUrl("http://localhost:" + port)
                 .defaultStatusHandler(HttpStatusCode::isError, (req, res) -> {})

@@ -1,12 +1,16 @@
 package br.com.ctkd.repository;
 
 import br.com.ctkd.config.JpaAuditingLogConfig;
+import br.com.ctkd.config.TestcontainersConfiguration;
 import br.com.ctkd.domain.Address;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.flyway.autoconfigure.FlywayAutoConfiguration;
+import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import java.util.List;
 import java.util.UUID;
@@ -14,8 +18,15 @@ import java.util.UUID;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 
 @DataJpaTest
-@Import(JpaAuditingLogConfig.class)
-@ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import({TestcontainersConfiguration.class, JpaAuditingLogConfig.class})
+@ImportAutoConfiguration(FlywayAutoConfiguration.class)
+@Sql(statements = {
+        "DELETE FROM photos_occurrence",
+        "DELETE FROM occurrences",
+        "DELETE FROM clients",
+        "DELETE FROM addresses"
+})
 class AddressRepositoryIT {
 
     @Autowired
