@@ -21,4 +21,20 @@ public class LocalizedMessageTranslationService {
         var locale = LocaleContextHolder.getLocale();
         return source.getMessage(exception.getMessage(), new Object[]{}, locale);
     }
+
+    public String translateMessage(String key) {
+        var locale = LocaleContextHolder.getLocale();
+        return source.getMessage(key, new Object[]{}, locale);
+    }
+
+    public String translateMessage(String key, String fallbackKey) {
+        var locale = LocaleContextHolder.getLocale();
+        var fallback = source.getMessage(fallbackKey, new Object[]{}, locale);
+        return source.getMessage(key, new Object[]{}, fallback, locale);
+    }
+
+    public String translateMessageOrDefault(String key, String defaultMessage) {
+        var locale = LocaleContextHolder.getLocale();
+        return source.getMessage(key, new Object[]{}, defaultMessage, locale);
+    }
 }

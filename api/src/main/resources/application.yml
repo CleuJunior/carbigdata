@@ -31,3 +31,10 @@ aws:
     access-key: minioadmin
     secret-key: minioadmin123
     bucket-name: occurrences
+
+doc:
+  swagger:
+    tile: Carbigdata API
+    description: REST API for managing clients, addresses, occurrences and photo attachments. All endpoints except /api/v1/auth/login require a Bearer JWT token.
+    version: 1.0.0
+    auth: bearerAuth
