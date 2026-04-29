@@ -1,7 +1,6 @@
 package br.com.ctkd.service;
 
 import br.com.ctkd.domain.Occurrence;
-import br.com.ctkd.domain.PhotoOccurrence;
 import br.com.ctkd.domain.StatusOccurrence;
 import br.com.ctkd.dto.request.OccurrenceQueryRequest;
 import br.com.ctkd.exceptions.NotFoundException;
@@ -9,10 +8,11 @@ import br.com.ctkd.exceptions.OccurrenceStatusException;
 import br.com.ctkd.repository.OccurrenceRepository;
 import br.com.ctkd.repository.specification.OccurrenceSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +36,10 @@ public class OccurrenceService {
         return repository.findAll();
     }
 
+    public Page<Occurrence> pageOccurrences(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size));
+    }
+
     @Transactional
     public Occurrence insertOccurrence(Occurrence occurrence) {
         return repository.save(occurrence);
@@ -53,13 +57,17 @@ public class OccurrenceService {
         return repository.save(occurrence);
     }
 
-    public List<Occurrence> search(OccurrenceQueryRequest request) {
+    public Page<Occurrence> search(OccurrenceQueryRequest request) {
         var direction = "ASC".equalsIgnoreCase(request.sortDirection())
                 ? Sort.Direction.ASC
                 : Sort.Direction.DESC;
 
         var sortField = request.sortBy() != null ? request.sortBy() : DEFAULT_SORT_FIELD;
         var sort = Sort.by(direction, sortField);
+
+        var pageNum = request.page() != null ? request.page() : 0;
+        var pageSize = request.size() != null ? request.size() : 15;
+        var pageable = PageRequest.of(pageNum, pageSize, sort);
 
         var spec = OccurrenceSpecification.withFilters(
                 request.clientName(),
@@ -68,6 +76,6 @@ public class OccurrenceService {
                 request.city()
         );
 
-        return repository.findAll(spec, sort);
+        return repository.findAll(spec, pageable);
     }
 }

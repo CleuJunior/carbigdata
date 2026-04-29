@@ -11,6 +11,7 @@ public record PhotoOccurrenceResponse(
         String id,
         String occurrenceId,
         String pathBucket,
+        String url,
         String hash,
         OffsetDateTime creationDate,
         OffsetDateTime updateDate,

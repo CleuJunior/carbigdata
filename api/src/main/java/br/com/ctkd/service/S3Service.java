@@ -17,6 +17,7 @@ import java.time.Duration;
 public class S3Service {
 
     private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
     private final S3Properties properties;
 
     public void uploadFile(String key, byte[] content, String contentType) {
@@ -29,5 +30,19 @@ public class S3Service {
                         .build(),
                 RequestBody.fromBytes(content)
         );
+    }
+
+    public String generatePresignedUrl(String key) {
+        var getObjectRequest = GetObjectRequest.builder()
+                .bucket(properties.bucketName())
+                .key(key)
+                .build();
+
+        var presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofHours(1))
+                .getObjectRequest(getObjectRequest)
+                .build();
+
+        return s3Presigner.presignGetObject(presignRequest).url().toString();
     }
 }

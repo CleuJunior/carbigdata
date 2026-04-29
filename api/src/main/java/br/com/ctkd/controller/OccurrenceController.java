@@ -17,6 +17,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,17 +78,36 @@ public class OccurrenceController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @GetMapping("/pageable")
+    @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+    @Operation(summary = "List occurrences with pagination")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Paginated occurrence list returned"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
+    })
+    public ResponseEntity<Page<OccurrenceResponse>> pageOccurrences(
+            @Parameter(description = "Page number (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Page size", example = "15") @RequestParam(defaultValue = "15") int size) {
+
+        var response = service.pageOccurrences(page, size)
+                .map(factory::toOccurrenceResponse);
+
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @PostMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
     @Operation(summary = "Search occurrences",
-            description = "Filter occurrences by client name, CPF, occurrence date, city, with optional sorting.")
+            description = "Filter and paginate occurrences by client name, CPF, occurrence date, city. " +
+                    "Supports sorting by occurrenceDate or city (ASC/DESC). " +
+                    "Use 'page' (default 0) and 'size' (default 15) for pagination.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Filtered occurrence list returned"),
+            @ApiResponse(responseCode = "200", description = "Paginated occurrence list returned"),
             @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
-    public ResponseEntity<List<OccurrenceResponse>> listOccurrences(@RequestBody OccurrenceQueryRequest request) {
+    public ResponseEntity<Page<OccurrenceResponse>> searchOccurrences(@RequestBody OccurrenceQueryRequest request) {
         var occurrences = service.search(request);
-        var response = factory.toOccurrenceResponse(occurrences);
+        var response = occurrences.map(factory::toOccurrenceResponse);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -94,8 +115,7 @@ public class OccurrenceController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN')")
     @Operation(summary = "Create an occurrence",
-            description = "Creates an occurrence with optional photo attachments. " +
-                    "Send as multipart/form-data: 'data' part (JSON) + optional 'photos' part (files).")
+            description = "Creates an occurrence with optional photo attachments. Send as multipart/form-data: 'data' part (JSON) + optional 'photos' part (files).")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Occurrence created"),
             @ApiResponse(responseCode = "401", description = "Unauthorized"),

@@ -15,6 +15,8 @@ public record OccurrenceQueryRequest(
         LocalDate occurrenceDate,
         String city,
         String sortBy,
-        String sortDirection
+        String sortDirection,
+        Integer page,
+        Integer size
 ) {
 }

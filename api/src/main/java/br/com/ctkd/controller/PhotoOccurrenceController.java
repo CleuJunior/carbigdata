@@ -3,6 +3,7 @@ package br.com.ctkd.controller;
 import br.com.ctkd.dto.response.PhotoOccurrenceResponse;
 import br.com.ctkd.factory.PhotoOccurrenceFactory;
 import br.com.ctkd.service.PhotoOccurrenceService;
+import br.com.ctkd.service.S3Service;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,6 +31,7 @@ public class PhotoOccurrenceController {
 
     private final PhotoOccurrenceService service;
     private final PhotoOccurrenceFactory factory;
+    private final S3Service s3Service;
 
     @GetMapping("/occurrences/{occurrenceId}")
     @PreAuthorize("hasAnyRole('ADMIN', 'USER')")

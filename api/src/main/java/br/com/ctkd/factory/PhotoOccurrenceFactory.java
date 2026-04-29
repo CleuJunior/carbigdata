@@ -3,18 +3,24 @@ package br.com.ctkd.factory;
 import br.com.ctkd.domain.Occurrence;
 import br.com.ctkd.domain.PhotoOccurrence;
 import br.com.ctkd.dto.response.PhotoOccurrenceResponse;
+import br.com.ctkd.service.S3Service;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class PhotoOccurrenceFactory {
+
+    private final S3Service s3Service;
 
     public PhotoOccurrenceResponse toPhotoOccurrenceResponse(PhotoOccurrence photo) {
         return PhotoOccurrenceResponse.builder()
                 .id(photo.getId())
                 .occurrenceId(photo.getOccurrence().getId())
                 .pathBucket(photo.getPathBucket())
+                .url(s3Service.generatePresignedUrl(photo.getPathBucket()))
                 .hash(photo.getHash())
                 .creationDate(photo.getCreationDate())
                 .updateDate(photo.getUpdateDate())

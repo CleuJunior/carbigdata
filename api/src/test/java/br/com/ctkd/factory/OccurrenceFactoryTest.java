@@ -6,10 +6,12 @@ import br.com.ctkd.domain.Occurrence;
 import br.com.ctkd.domain.PhotoOccurrence;
 import br.com.ctkd.domain.StatusOccurrence;
 import br.com.ctkd.dto.request.OccurrenceRequest;
+import br.com.ctkd.dto.response.PhotoOccurrenceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -18,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +30,7 @@ class OccurrenceFactoryTest {
     private ClientFactory clientFactory;
     @Spy
     private AddressFactory addressFactory;
-    @Spy
+    @Mock
     private PhotoOccurrenceFactory photoOccurrenceFactory;
     @InjectMocks
     private OccurrenceFactory underTest;
@@ -74,6 +77,13 @@ class OccurrenceFactoryTest {
 
     @Test
     void shouldMapOccurrenceToOccurrenceResponse() {
+        given(photoOccurrenceFactory.toPhotoOccurrenceResponse(occurrence.getPhotos()))
+                .willReturn(List.of(PhotoOccurrenceResponse.builder()
+                        .pathBucket("s3://bucket/photo.jpg")
+                        .url("http://minio:9000/bucket/photos/uuid.jpg?signature=abc")
+                        .hash("91823af61238490")
+                        .build()));
+
         var result = underTest.toOccurrenceResponse(occurrence);
 
         then(result.occurrenceDate()).isEqualTo(occurrence.getOccurrenceDate());
@@ -86,8 +96,9 @@ class OccurrenceFactoryTest {
         then(result.address().zipCode()).isEqualTo(occurrence.getAddress().getZipCode());
         then(result.address().city()).isEqualTo(occurrence.getAddress().getCity());
         then(result.address().state()).isEqualTo(occurrence.getAddress().getState());
-        then(result.photos().getFirst().pathBucket()).isEqualTo(occurrence.getPhotos().getFirst().getPathBucket());
-        then(result.photos().getFirst().hash()).isEqualTo(occurrence.getPhotos().getFirst().getHash());
+        then(result.photos().getFirst().pathBucket()).isEqualTo("s3://bucket/photo.jpg");
+        then(result.photos().getFirst().url()).isEqualTo("http://minio:9000/bucket/photos/uuid.jpg?signature=abc");
+        then(result.photos().getFirst().hash()).isEqualTo("91823af61238490");
 
         verify(clientFactory).toClientResponse(occurrence.getClient());
         verify(addressFactory).toAddressResponse(occurrence.getAddress());
@@ -96,6 +107,13 @@ class OccurrenceFactoryTest {
 
     @Test
     void shouldMapOccurrenceListToOccurrenceResponseList() {
+        given(photoOccurrenceFactory.toPhotoOccurrenceResponse(occurrence.getPhotos()))
+                .willReturn(List.of(PhotoOccurrenceResponse.builder()
+                        .pathBucket("s3://bucket/photo.jpg")
+                        .url("http://minio:9000/bucket/photos/uuid.jpg?signature=abc")
+                        .hash("91823af61238490")
+                        .build()));
+
         var result = underTest.toOccurrenceResponse(Collections.singletonList(occurrence));
 
         then(result.getFirst().occurrenceDate()).isEqualTo(occurrence.getOccurrenceDate());
@@ -108,8 +126,9 @@ class OccurrenceFactoryTest {
         then(result.getFirst().address().zipCode()).isEqualTo(occurrence.getAddress().getZipCode());
         then(result.getFirst().address().city()).isEqualTo(occurrence.getAddress().getCity());
         then(result.getFirst().address().state()).isEqualTo(occurrence.getAddress().getState());
-        then(result.getFirst().photos().getFirst().pathBucket()).isEqualTo(occurrence.getPhotos().getFirst().getPathBucket());
-        then(result.getFirst().photos().getFirst().hash()).isEqualTo(occurrence.getPhotos().getFirst().getHash());
+        then(result.getFirst().photos().getFirst().pathBucket()).isEqualTo("s3://bucket/photo.jpg");
+        then(result.getFirst().photos().getFirst().url()).isEqualTo("http://minio:9000/bucket/photos/uuid.jpg?signature=abc");
+        then(result.getFirst().photos().getFirst().hash()).isEqualTo("91823af61238490");
 
         verify(clientFactory).toClientResponse(occurrence.getClient());
         verify(addressFactory).toAddressResponse(occurrence.getAddress());
