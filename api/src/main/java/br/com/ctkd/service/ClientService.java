@@ -2,6 +2,7 @@ package br.com.ctkd.service;
 
 import br.com.ctkd.domain.Client;
 import br.com.ctkd.exceptions.NotFoundException;
+import br.com.ctkd.producer.ClientEventProducer;
 import br.com.ctkd.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -17,6 +18,7 @@ import java.util.UUID;
 public class ClientService {
 
     private final ClientRepository repository;
+    private final ClientEventProducer eventProducer;
 
     public Client getById(String id) {
         var uuid = UUID.fromString(id);
@@ -35,7 +37,9 @@ public class ClientService {
     }
 
     public Client insertClient(Client client) {
-        return repository.save(client);
+        var saved = repository.save(client);
+        eventProducer.publish(saved, "CREATED");
+        return saved;
     }
 
     public Client updateClient(Client request, String id) {
@@ -45,7 +49,9 @@ public class ClientService {
         Optional.ofNullable(request.getBirthdate()).ifPresent(currentClient::setBirthdate);
         Optional.ofNullable(request.getCpf()).ifPresent(currentClient::setCpf);
 
-        return repository.save(currentClient);
+        var updated = repository.save(currentClient);
+        eventProducer.publish(updated, "UPDATED");
+        return updated;
     }
 
     public void softDelete(String id) {
@@ -54,5 +60,6 @@ public class ClientService {
         client.setDeleted(true);
 
         repository.save(client);
+        eventProducer.publish(client, "DELETED");
     }
 }

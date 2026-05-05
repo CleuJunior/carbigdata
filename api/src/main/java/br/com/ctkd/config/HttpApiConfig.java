@@ -12,7 +12,7 @@ public class HttpApiConfig {
     @Bean
     public RestClient client() {
         return RestClient.builder()
-                .baseUrl("https://pokeapi.co/api/v2/pokemon?offset=20&limit=20")
+                .baseUrl("https://pokeapi.co/api/v2/pokemon")
                 .defaultStatusHandler(HttpStatusCode::isError, (req, res) -> {})
                 .build();
     }
