@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: client-consumer
@@ -15,7 +18,12 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017
+      database: kafka-consumer-db
 
 kafka:
   topics:
     client-events: client-events
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
