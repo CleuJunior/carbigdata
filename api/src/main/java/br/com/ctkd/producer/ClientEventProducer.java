@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -36,5 +38,9 @@ public class ClientEventProducer {
                                 client.getId(), eventType, result.getRecordMetadata().offset());
                     }
                 });
+    }
+
+    public void publish(Client ...clients) {
+        List.of(clients).forEach(c -> publish(c, "CREATED"));
     }
 }

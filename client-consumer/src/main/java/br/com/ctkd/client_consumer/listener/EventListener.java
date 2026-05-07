@@ -1,6 +1,6 @@
 package br.com.ctkd.client_consumer.listener;
 
-import br.com.ctkd.client_consumer.event.ClientEvent;
+import br.com.ctkd.client_consumer.dto.event.ClientEventDto;
 import br.com.ctkd.client_consumer.service.ClientEventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ClientEventListener {
+public class EventListener {
 
     private final ClientEventService service;
 
@@ -22,8 +22,8 @@ public class ClientEventListener {
             groupId = "${spring.kafka.consumer.group-id}",
             containerFactory = "clientEventListenerContainerFactory"
     )
-    public void listen(
-            @Payload ClientEvent event,
+    public void clientListener(
+            @Payload ClientEventDto event,
             @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
             @Header(KafkaHeaders.RECEIVED_PARTITION) int partition,
             @Header(KafkaHeaders.OFFSET) long offset

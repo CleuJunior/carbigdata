@@ -1,7 +1,7 @@
 package br.com.ctkd.client_consumer.service;
 
-import br.com.ctkd.client_consumer.document.ClientDocument;
-import br.com.ctkd.client_consumer.event.ClientEvent;
+import br.com.ctkd.client_consumer.domain.ClientView;
+import br.com.ctkd.client_consumer.dto.event.ClientEventDto;
 import br.com.ctkd.client_consumer.repository.ClientDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,20 +14,20 @@ public class ClientEventService {
 
     private final ClientDocumentRepository repository;
 
-    public void process(ClientEvent event) {
-        log.info("Processing client event: id={}, type={}", event.getId(), event.getEventType());
+    public void process(ClientEventDto event) {
+        log.info("Processing client event: id={}", event.id());
 
-        var document = repository.findByClientId(event.getId())
-                .orElseGet(ClientDocument::new);
+        var document = repository.findByClientId(event.id())
+                .orElseGet(ClientView::new);
 
-        document.setClientId(event.getId());
-        document.setName(event.getName());
-        document.setBirthdate(event.getBirthdate());
-        document.setCpf(event.getCpf());
-        document.setEventType(event.getEventType());
+        document.setClientId(event.id());
+        document.setName(event.name());
+        document.setBirthdate(event.birthdate());
+        document.setCpf(event.cpf());
+        document.setDeleted(event.deleted());
 
         repository.save(document);
 
-        log.info("Client saved successfully: id={}", event.getId());
+        log.info("Client saved successfully: id={}", event.id());
     }
 }
