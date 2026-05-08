@@ -2,8 +2,10 @@ package br.com.ctkd.service;
 
 import br.com.ctkd.domain.Address;
 import br.com.ctkd.exceptions.NotFoundException;
+import br.com.ctkd.producer.AddressEventProducer;
 import br.com.ctkd.repository.AddressRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,8 @@ import java.util.UUID;
 public class AddressService {
 
     private final AddressRepository repository;
+    @Autowired
+    private AddressEventProducer notify;
 
     public Address getAddressById(String id) {
         var uuid = UUID.fromString(id);
@@ -35,7 +39,9 @@ public class AddressService {
     }
 
     public Address insertAddress(Address address) {
-        return repository.save(address);
+        repository.save(address);
+        notify.publish(address);
+        return address;
     }
 
     public Address updateAddress(Address request, String id) {

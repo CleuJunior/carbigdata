@@ -8,7 +8,8 @@ spring:
   kafka:
     bootstrap-servers: localhost:9092
     consumer:
-      group-id: client-consumer-group
+      client-group-id: client-consumer-group
+      address-group-id: address-consumer-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
@@ -23,6 +24,7 @@ spring:
 kafka:
   topics:
     client-events: client-events
+    address-events: address-events
 
 logging:
   level:

@@ -1,5 +1,6 @@
 package br.com.ctkd.config;
 
+import br.com.ctkd.dto.event.AddressEvent;
 import br.com.ctkd.dto.event.ClientEvent;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
@@ -32,7 +33,24 @@ public class KafkaProducerConfig {
     }
 
     @Bean
+    public ProducerFactory<String, AddressEvent> addressEventProducerFactory() {
+        return new DefaultKafkaProducerFactory<>(
+                Map.of(
+                        ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers,
+                        ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+                        ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class,
+                        JsonSerializer.ADD_TYPE_INFO_HEADERS, false
+                )
+        );
+    }
+
+    @Bean
     public KafkaTemplate<String, ClientEvent> clientEventKafkaTemplate() {
         return new KafkaTemplate<>(clientEventProducerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, AddressEvent> adrresstEventKafkaTemplate() {
+        return new KafkaTemplate<>(addressEventProducerFactory());
     }
 }

@@ -9,27 +9,22 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-import java.time.LocalDate;
-
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "client-view")
-public class ClientView extends View {
-
+@Document(collection = "address-view")
+public class AddressView extends View {
     @Indexed(unique = true)
-    @Field("client_id")
-    private String clientId;
-
-    @Field("client_name")
-    private String name;
-
-    @Field("birthdate")
-    private LocalDate birthdate;
-
-    @Field("cpf_number")
-    private String cpf;
+    @Field("address_id")
+    private String addressId;
+    @Field("street_name")
+    private String streetName;
+    private String neighborhood;
+    @Field("zip_code")
+    private String zipCode;
+    private String city;
+    private String state;
 
 }

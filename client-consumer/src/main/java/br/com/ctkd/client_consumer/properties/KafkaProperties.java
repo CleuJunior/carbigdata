@@ -5,6 +5,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "spring.kafka")
 public record KafkaProperties(
         String bootstrapServers,
-        String groupId
+        Consumer consumer
 ) {
+    public record Consumer(
+            String clientGroupId,
+            String addressGroupId
+    ) {}
 }

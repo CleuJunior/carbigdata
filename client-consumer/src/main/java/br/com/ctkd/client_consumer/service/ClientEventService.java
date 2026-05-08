@@ -2,6 +2,7 @@ package br.com.ctkd.client_consumer.service;
 
 import br.com.ctkd.client_consumer.domain.ClientView;
 import br.com.ctkd.client_consumer.dto.event.ClientEventDto;
+import br.com.ctkd.client_consumer.mapper.ClientMapper;
 import br.com.ctkd.client_consumer.repository.ClientDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,20 +14,21 @@ import org.springframework.stereotype.Service;
 public class ClientEventService {
 
     private final ClientDocumentRepository repository;
+    private final ClientMapper mapper;
 
     public void process(ClientEventDto event) {
         log.info("Processing client event: id={}", event.id());
 
-        var document = repository.findByClientId(event.id())
+        var clientView = repository.findByClientId(event.id())
                 .orElseGet(ClientView::new);
 
-        document.setClientId(event.id());
-        document.setName(event.name());
-        document.setBirthdate(event.birthdate());
-        document.setCpf(event.cpf());
-        document.setDeleted(event.deleted());
+        clientView.setClientId(event.id());
+        clientView.setName(event.name());
+        clientView.setBirthdate(event.birthdate());
+        clientView.setCpf(event.cpf());
+        clientView.setDeleted(event.deleted());
 
-        repository.save(document);
+        repository.save(clientView);
 
         log.info("Client saved successfully: id={}", event.id());
     }
