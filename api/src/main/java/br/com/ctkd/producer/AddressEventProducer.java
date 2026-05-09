@@ -21,7 +21,7 @@ public class AddressEventProducer {
     @Value("${kafka.topics.address-events}")
     private String topic;
 
-    public void publish(Address address) {
+    public void publish(Address address, String eventType) {
         var event = AddressEvent.builder()
                 .id(address.getId())
                 .streetName(address.getStreetName())
@@ -29,6 +29,7 @@ public class AddressEventProducer {
                 .zipCode(address.getZipCode())
                 .city(address.getCity())
                 .state(address.getState())
+                .eventType(eventType)
                 .build();
 
         log.info("[Sending event]: [{}], for topic: {}", event, topic);

@@ -1,5 +1,6 @@
 package br.com.ctkd.client_consumer.dto.event;
 
+import br.com.ctkd.client_consumer.enums.EventType;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.time.OffsetDateTime;
@@ -12,5 +13,6 @@ public record AddressEventDto(
         String zipCode,
         String city,
         String state,
-        boolean deleted) {
+        boolean deleted,
+        EventType eventType) {
 }

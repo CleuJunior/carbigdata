@@ -40,7 +40,7 @@ public class AddressService {
 
     public Address insertAddress(Address address) {
         repository.save(address);
-        notify.publish(address);
+        notify.publish(address, "CREATED");
         return address;
     }
 
@@ -62,5 +62,6 @@ public class AddressService {
         address.setDeleted(true);
 
         repository.save(address);
+        notify.publish(address, "DELETED");
     }
 }

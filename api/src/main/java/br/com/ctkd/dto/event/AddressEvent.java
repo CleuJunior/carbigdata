@@ -13,7 +13,8 @@ public record AddressEvent(
         String zipCode,
         String city,
         String state,
-        boolean deleted
+        boolean deleted,
+        String eventType
 ) {
 
 }

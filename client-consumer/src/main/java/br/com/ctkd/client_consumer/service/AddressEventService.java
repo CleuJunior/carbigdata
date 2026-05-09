@@ -1,12 +1,10 @@
 package br.com.ctkd.client_consumer.service;
 
 import br.com.ctkd.client_consumer.domain.AddressView;
-import br.com.ctkd.client_consumer.domain.ClientView;
 import br.com.ctkd.client_consumer.dto.event.AddressEventDto;
-import br.com.ctkd.client_consumer.dto.event.ClientEventDto;
-import br.com.ctkd.client_consumer.mapper.ClientMapper;
+import br.com.ctkd.client_consumer.enums.EventType;
+import br.com.ctkd.client_consumer.mapper.AddressMapper;
 import br.com.ctkd.client_consumer.repository.AddressDocumentRepository;
-import br.com.ctkd.client_consumer.repository.ClientDocumentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,24 +15,38 @@ import org.springframework.stereotype.Service;
 public class AddressEventService {
 
     private final AddressDocumentRepository repository;
+    private final AddressMapper mapper;
 
     public void process(AddressEventDto event) {
-        log.info("Processing address event: id={}", event.id());
+        log.info("Processing address event: id={}, for type: {}", event.id(), event.eventType());
 
-        var addressView = repository.findByAddressId(event.id())
-                .orElseGet(AddressView::new);
+        if (event.eventType() == EventType.CREATED) {
+            var addressView = mapper.fromEvent(event);
+            repository.save(addressView);
+            log.info("Address saved successfully: id={}", event.id());
+            return;
+        }
 
+        if (event.eventType() == EventType.UPDATED) {
+            repository.findByAddressId(event.id())
+                    .ifPresent(address -> {
+                        var addressUpdated = mapper.apply(address, event);
+                        repository.save(addressUpdated);
+                        log.info("Address updated");
+                    });
+            return;
+        }
 
-        addressView.setAddressId(event.id());
-        addressView.setStreetName(event.streetName());
-        addressView.setNeighborhood(event.neighborhood());
-        addressView.setZipCode(event.zipCode());
-        addressView.setCity(event.city());
-        addressView.setState(event.state());
-        addressView.setDeleted(event.deleted());
+        if (event.eventType() == EventType.DELETED) {
+            repository.findByAddressId(event.id())
+                    .ifPresent(address -> {
+                        address.setDeleted(true);
+                        repository.save(address);
+                        log.info("Address deleted");
+                    });
+            return;
+        }
 
-        repository.save(addressView);
-
-        log.info("Address saved successfully: id={}", event.id());
+        log.warn("Event type incorrectly");
     }
 }
