@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: email-sender
+  kafka:
+    bootstrap-servers: localhost:9092
+
+aws:
+  ses:
+    endpoint: http://localhost:4566
+    region: us-east-1
+    access-key: test
+    secret-key: test
+    from: kapiwil879@bezill.com
+    verified-email: kapiwil879@bezill.com
