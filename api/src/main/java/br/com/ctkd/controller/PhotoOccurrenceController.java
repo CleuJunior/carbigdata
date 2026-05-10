@@ -12,13 +12,17 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -63,6 +67,23 @@ public class PhotoOccurrenceController {
         var response = factory.toPhotoOccurrenceResponse(photo);
 
         return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @PostMapping(value = "/occurrences/{occurrenceId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "Upload a photo for an existing occurrence")
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Photo uploaded"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "403", description = "Forbidden — ADMIN role required"),
+            @ApiResponse(responseCode = "404", description = "Occurrence not found")
+    })
+    public ResponseEntity<PhotoOccurrenceResponse> uploadPhoto(
+            @Parameter(description = "Occurrence UUID") @PathVariable String occurrenceId,
+            @RequestPart("photo") MultipartFile photo) {
+        var saved = service.uploadPhoto(occurrenceId, photo);
+        var response = factory.toPhotoOccurrenceResponse(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{photoId}")

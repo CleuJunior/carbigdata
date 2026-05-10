@@ -104,3 +104,5 @@ docker-compose.override.yml
 # ------------------------------------------------------------
 .sonar/
 .sonarqube/
+
+CLAUDE.md
