@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="br.com.ctkd.gui.controller.ClientController"
+      spacing="14">
+
+    <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="12">
+        <Label text="Clients" styleClass="section-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Refresh" onAction="#handleRefresh" styleClass="secondary-button"/>
+        <Button text="+ Add New" onAction="#handleAddNew" styleClass="primary-button"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" visible="false" managed="false" wrapText="true" maxWidth="Infinity"/>
+
+    <!-- Table -->
+    <TableView fx:id="table" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="nameCol" text="Name" prefWidth="180"/>
+            <TableColumn fx:id="cpfCol" text="CPF" prefWidth="130"/>
+            <TableColumn fx:id="birthdateCol" text="Birthdate" prefWidth="100"/>
+            <TableColumn fx:id="creationDateCol" text="Created At" prefWidth="140"/>
+            <TableColumn fx:id="updateDateCol" text="Updated At" prefWidth="140"/>
+            <TableColumn fx:id="deletedCol" text="Deleted" prefWidth="70"/>
+        </columns>
+        <placeholder><Label text="No clients found."/></placeholder>
+    </TableView>
+
+</VBox>
