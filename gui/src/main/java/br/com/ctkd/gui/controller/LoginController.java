@@ -2,6 +2,7 @@ package br.com.ctkd.gui.controller;
 
 import br.com.ctkd.gui.MainApp;
 import br.com.ctkd.gui.service.ApiService;
+import br.com.ctkd.gui.ui.FxUtils;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -39,7 +40,7 @@ public class LoginController {
         errorLabel.setVisible(false);
         errorLabel.setManaged(false);
 
-        Thread t = new Thread(() -> {
+        FxUtils.async(() -> {
             try {
                 String token = apiService.login(username, password);
                 Platform.runLater(() -> {
@@ -57,8 +58,6 @@ public class LoginController {
                 });
             }
         });
-        t.setDaemon(true);
-        t.start();
     }
 
     private void resetButton() {

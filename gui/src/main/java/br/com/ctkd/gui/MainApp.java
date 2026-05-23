@@ -6,6 +6,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class MainApp extends Application {
 
     private static Stage primaryStage;
@@ -45,7 +47,12 @@ public class MainApp extends Application {
         primaryStage.setScene(scene);
     }
 
+    public static String stylesheet() {
+        return MainApp.class.getResource("style.css").toExternalForm();
+    }
+
     public static void main(String[] args) {
         launch(args);
     }
 }
+y
